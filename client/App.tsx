@@ -58,6 +58,14 @@ class App extends React.Component {
             <h1 className="title">
               Snow Miku 2020 Latest Entries
             </h1>
+            <p className="subtitle">
+              <a href="https://piapro.jp/pages/official_collabo/2020snowmiku/index" target="blank">
+                Official contest pages
+                  <span className="icon">
+                    <i className="fas fa-external-link-alt"/>
+                  </span>
+              </a>
+            </p>
           </div>
         </section>
         <div>
