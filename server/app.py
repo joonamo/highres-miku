@@ -10,13 +10,13 @@ def getApp():
   CORS(app)
   cache = SimpleCache()
 
-  @app.route("/latest")
+  @app.route("/api/latest")
   def latest():
     v = cache.get('latest')
     if v is None:
       try:
         v = getMikuPage()
-        cache.set('latest', v, 30 * 60)
+        cache.set('latest', v, 10 * 60)
       except:
         return Response(status=500)
     return Response(

@@ -13,7 +13,7 @@ class AppViewModel {
 
   public reloadImages() {
     this.isLoading = true
-    fetch('/latest').then(async r => {
+    fetch('/api/latest').then(async r => {
       this.imagesInfos = (await r.json()).results
     })
     .catch(e => console.log(e))
