@@ -24,5 +24,5 @@ def getApp():
         status=200
     )
 
-  app.wsgi_app = WhiteNoise(app.wsgi_app, root='client/build/', index_file=True)
+  app.wsgi_app = WhiteNoise(app.wsgi_app, root='client/build/', index_file=True, autorefresh=True)
   return app
