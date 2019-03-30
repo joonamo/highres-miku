@@ -3,6 +3,7 @@ import json
 from server.miku_scrape import getMikuPage
 from flask_cors import CORS
 from werkzeug.contrib.cache import SimpleCache
+from whitenoise import WhiteNoise
 
 def getApp():
   app = Flask(__name__)
@@ -23,4 +24,5 @@ def getApp():
         status=200
     )
 
+  app.wsgi_app = WhiteNoise(app.wsgi_app, root='client/build/', index_file=True)
   return app
