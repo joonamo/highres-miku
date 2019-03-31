@@ -61,6 +61,14 @@ export class Titlebar extends React.Component {
                 <i className="fas fa-external-link-alt" />
               </span>
             </a>
+
+            <a href="https://www.mikufan.com/snow-miku-2020-and-rabbit-yukine-design-submissions-now-open-the-theme-is-musical-instrument/" target="blank" className="navbar-item">
+              <span>Information in English (mikufan.com) </span>
+              <span className="icon">
+                <i className="fas fa-external-link-alt" />
+              </span>
+            </a>
+            
           </div>
         </div>
       </nav>
