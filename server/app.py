@@ -1,9 +1,16 @@
-from flask import Flask, Response
+from flask import Flask, Response, request
 import json
-from server.miku_scrape import getMikuPage
+from server.miku_scrape import getLatestMiku, getPopularMiku
 from flask_cors import CORS
 from werkzeug.contrib.cache import SimpleCache
 from whitenoise import WhiteNoise
+import traceback
+
+def noneOr(v, v1):
+  if v is None:
+    return v1
+  else:
+    return v
 
 def getApp():
   app = Flask(__name__)
@@ -12,12 +19,32 @@ def getApp():
 
   @app.route("/api/latest")
   def latest():
-    v = cache.get('latest')
+    page = noneOr(request.args.get('page'), "1")
+    cacheV = 'latest-%s' % page
+    v = cache.get(cacheV)
     if v is None:
       try:
-        v = getMikuPage()
-        cache.set('latest', v, 10 * 60)
+        v = getLatestMiku(page)
+        cache.set(cacheV, v, 10 * 60)
       except:
+        traceback.print_exc()
+        return Response(status=500)
+    return Response(
+        json.dumps(v),
+        status=200
+    )
+
+  @app.route("/api/popular")
+  def popular():
+    page = noneOr(request.args.get('page'), "1")
+    cacheV = 'popular-%s' % page
+    v = cache.get(cacheV)
+    if v is None:
+      try:
+        v = getPopularMiku(page)
+        cache.set(cacheV, v, 10 * 60)
+      except:
+        traceback.print_exc()
         return Response(status=500)
     return Response(
         json.dumps({'results': v}),
