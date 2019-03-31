@@ -45,7 +45,7 @@ export class Titlebar extends React.Component {
                 {`Sort: ${appViewModel.viewMode}`}
               </a>
 
-              <div className={"navbar-dropdown"}>
+              <div className={ClassNames("navbar-dropdown", {'is-hidden-touch': !this.sortDropdownOpen})}>
                 <a className="navbar-item" onClick={this.setLatest}>
                   Latest
                 </a>
