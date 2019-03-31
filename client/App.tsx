@@ -53,22 +53,20 @@ class App extends React.Component {
   public render() {
     return (<>
       <Titlebar />
-      <div className="container">
-        <div>
-          {
-            appViewModel.isLoading
-              ? <div className="tile is-ancestor is-horizontal">
-                <div className="tile is-parent">
-                  <div
-                    className="tile is-child box">
-                    <p>Loading...</p>
-                  </div>
-                </div>
-              </div>
-              : renderResults(appViewModel.imagesInfos)
-          }
+      <section className="section">
+        <div className="container">
+          <h2 className="title is-hidden-desktop">{appViewModel.viewMode === "Popular" ? "Most Popular Entries" : "Latest Entries"}</h2>
+          <div>
+            {
+              appViewModel.isLoading
+                ?   <p>Loading...</p>
+                : <>
+                  {renderResults(appViewModel.imagesInfos)}
+                  </>
+            }
+          </div>
         </div>
-      </div>
+      </section>
     </>
     )
   }
