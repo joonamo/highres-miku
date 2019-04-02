@@ -1,1 +1,1 @@
-web: GUNICORN_CMD_ARGS="--workers=3" gunicorn server.app:'getApp()'
+web: gunicorn server.app:'getApp()' --workers=3
