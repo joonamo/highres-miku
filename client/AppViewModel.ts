@@ -46,6 +46,7 @@ class AppViewModel {
 
   public setViewMode(mode: ViewMode) {
     if (mode !== this.viewMode) {
+      this.currentPage = 1
       this.viewMode = mode
       this.reloadImages()
       this.setSearchParam('viewMode', mode)
