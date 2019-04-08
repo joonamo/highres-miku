@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react'
 import * as React from 'react';
 import { appViewModel, ImageInfo } from './AppViewModel'
+import { Paginator } from './Paginator';
 import { Titlebar } from './Tilebar';
 
 const renderResult = (result: ImageInfo | undefined) => {
@@ -57,11 +58,13 @@ class App extends React.Component {
         <div className="container">
           <h2 className="title is-hidden-desktop">{appViewModel.viewMode === "Popular" ? "Most Popular Entries" : "Latest Entries"}</h2>
           <div>
+            <Paginator />
             {
               appViewModel.isLoading
                 ?   <p>Loading...</p>
                 : <>
                   {renderResults(appViewModel.imagesInfos)}
+                  <Paginator />
                   </>
             }
           </div>

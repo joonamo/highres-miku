@@ -13,6 +13,8 @@ class AppViewModel {
   @observable public imagesInfos: ImageInfo[] = []
   @observable public isLoading: boolean = false
   @observable public viewMode: ViewMode = 'Latest'
+  @observable public currentPage: number = 1
+  @observable public pageCount: number = 1
 
   public constructor() {
     const params = new URL(window.location.href).searchParams
@@ -25,13 +27,18 @@ class AppViewModel {
         this.viewMode = 'Latest'
         break
     }
+    this.currentPage = params.has('page') ? Number(params.get('page')) : 1
   }
 
   public reloadImages() {
     this.isLoading = true
-    const url = this.viewMode === 'Latest' ? '/api/latest' : '/api/popular'
-    fetch(url).then(async r => {
-      this.imagesInfos = (await r.json()).results
+    const url = new URL(window.location.href)
+    url.pathname = (this.viewMode === 'Latest' ? '/api/latest' : '/api/popular')
+    url.searchParams.set('page', String(this.currentPage))
+    fetch(url.href).then(async r => {
+      const data = await r.json()
+      this.imagesInfos = data.results
+      this.pageCount = Number(data.pageCount)
     })
     .catch(e => console.log(e))
     .finally(() => this.isLoading = false)
@@ -41,10 +48,22 @@ class AppViewModel {
     if (mode !== this.viewMode) {
       this.viewMode = mode
       this.reloadImages()
-      const url = new URL(window.location.href)
-      url.searchParams.set('viewMode', mode)
-      history.replaceState({}, '', url.href)
+      this.setSearchParam('viewMode', mode)
     }
+  }
+
+  public setPage(page: number) {
+    if (this.currentPage !== page) {
+      this.currentPage = Math.min(Math.max(page, 1), this.pageCount +1)
+      this.reloadImages()
+      this.setSearchParam('page', String(page))
+    }
+  }
+
+  private setSearchParam(param: string, value: string) {
+    const url = new URL(window.location.href)
+    url.searchParams.set(param, value)
+    history.pushState({}, '', url.href)
   }
 }
 
