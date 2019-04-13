@@ -32,7 +32,8 @@ class AppViewModel {
 
   public reloadImages() {
     this.isLoading = true
-    const url = new URL(window.location.host)
+    const url = new URL(window.location.href)
+    url.search = ""
     url.pathname = (this.viewMode === 'Latest' ? '/api/latest' : '/api/popular')
     url.searchParams.set('page', String(this.currentPage))
     fetch(url.href).then(async r => {
