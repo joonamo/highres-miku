@@ -50,7 +50,7 @@ class AppViewModel {
       this.currentPage = 1
       this.viewMode = mode
       this.reloadImages()
-      this.setSearchParam('viewMode', mode)
+      this.setSearchParams()
     }
   }
 
@@ -58,13 +58,15 @@ class AppViewModel {
     if (this.currentPage !== page) {
       this.currentPage = Math.min(Math.max(page, 1), this.pageCount +1)
       this.reloadImages()
-      this.setSearchParam('page', String(page))
+      this.setSearchParams()
     }
   }
 
-  private setSearchParam(param: string, value: string) {
+  private setSearchParams() {
     const url = new URL(window.location.href)
-    url.searchParams.set(param, value)
+    url.search = ""
+    url.searchParams.set('page', String(this.currentPage))
+    url.searchParams.set('viewMode', this.viewMode)
     history.pushState({}, '', url.href)
   }
 }
