@@ -24,6 +24,7 @@ def getApp(developmentHost = None):
     cacheV = 'latest-%s' % page
     v = cache.get(cacheV)
     if v is None:
+      print("'%s' Not found in cache, refreshing..." % cacheV)
       try:
         v = getLatestMiku(page)
         cache.set(cacheV, v, 10 * 60)
@@ -41,6 +42,7 @@ def getApp(developmentHost = None):
     cacheV = 'popular-%s' % page
     v = cache.get(cacheV)
     if v is None:
+      print("'%s' Not found in cache, refreshing..." % cacheV)
       try:
         v = getPopularMiku(page)
         cache.set(cacheV, v, 10 * 60)
