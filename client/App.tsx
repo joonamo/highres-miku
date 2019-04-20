@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react'
 import * as React from 'react';
 import { appViewModel, ImageInfo } from './AppViewModel'
+import { Loading } from './Loading';
 import { Paginator } from './Paginator';
 import { Titlebar } from './Tilebar';
 
@@ -9,21 +10,25 @@ const renderResult = (result: ImageInfo | undefined) => {
     ? (
       <div className="tile is-parent">
         <div
-          className="tile is-child box"
+          className="tile is-child card"
           key={result.link}>
           <a href={result.link} target="blank">
-            <article>
+            <div className="card-image">
               <figure
-                className="image is-square box"
+                className="image is-4by3"
                 style={{
                   backgroundImage: `url(${result.image})`,
                   backgroundRepeat: 'no-repeat',
                   backgroundSize: 'contain',
                   backgroundPosition: 'center'
                 }} />
-              <p className="title is-5">{result.name}</p>
-              <p className="subtitle is-5">{result.author}</p>
-            </article>
+            </div>
+            <div className="card-content">
+              <div className="media-content">
+                <p className="title is-5">{result.name}</p>
+                <p className="subtitle is-5">{result.author}</p>
+              </div>
+            </div>
           </a>
         </div>
       </div>
@@ -61,7 +66,7 @@ class App extends React.Component {
             <Paginator />
             {
               appViewModel.isLoading
-                ?   <p>Loading...</p>
+                ? <Loading />
                 : <>
                   {renderResults(appViewModel.imagesInfos)}
                   <Paginator />
