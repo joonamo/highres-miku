@@ -1,9 +1,9 @@
 import { observer } from 'mobx-react'
-import * as React from 'react';
+import * as React from 'react'
 import { appViewModel, ImageInfo } from './AppViewModel'
-import { Loading } from './Loading';
-import { Paginator } from './Paginator';
-import { Titlebar } from './Tilebar';
+import { Loading } from './Loading'
+import { Paginator } from './Paginator'
+import { Titlebar } from './Tilebar'
 
 const renderResult = (result: ImageInfo | undefined) => {
   return !!result

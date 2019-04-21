@@ -42,7 +42,19 @@ class AppViewModel {
       this.pageCount = Number(data.pageCount)
     })
     .catch(e => console.log(e))
-    .finally(() => this.isLoading = false)
+    .finally(() => {
+      this.isLoading = false
+      this.prefetchNextPage()
+    })
+  }
+
+  public async prefetchNextPage() {
+    const url = new URL(window.location.href)
+    url.search = ""
+    url.pathname = (this.viewMode === 'Latest' ? '/api/latest' : '/api/popular')
+    url.searchParams.set('page', String(this.currentPage + 1))
+    fetch(url.href)
+      .catch(e => console.log(e))
   }
 
   public setViewMode(mode: ViewMode) {
