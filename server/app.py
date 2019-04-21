@@ -1,11 +1,11 @@
-from flask import Flask, Response, request
+from flask import Flask, Response, request, after_this_request
 import json
 from server.miku_scrape import getLatestMiku, getPopularMiku
-from flask_cors import CORS
 from werkzeug.contrib.cache import SimpleCache
 from whitenoise import WhiteNoise
 import traceback
 from requests import get
+from concurrent.futures import ThreadPoolExecutor
 
 def noneOr(v, v1):
   if v is None:
@@ -14,23 +14,29 @@ def noneOr(v, v1):
     return v
 
 def getApp(developmentHost = None):
-  app = Flask(__name__, static_folder=None)
-  CORS(app)
+  executor = ThreadPoolExecutor(2)
   cache = SimpleCache()
+  app = Flask(__name__, static_folder=None)
 
   @app.route("/api/latest")
   def latest():
-    page = noneOr(request.args.get('page'), "1")
-    cacheV = 'latest-%s' % page
-    v = cache.get(cacheV)
-    if v is None:
-      print("'%s' Not found in cache, refreshing..." % cacheV)
-      try:
+    def getLatestPage(page):
+      cacheV = 'latest-%d' % page
+      v = cache.get(cacheV)
+      if v is None:
         v = getLatestMiku(page)
         cache.set(cacheV, v, 10 * 60)
-      except:
-        traceback.print_exc()
-        return Response(status=500)
+      return v
+    
+    try:
+      page = int(noneOr(request.args.get('page'), "1"))
+      v = getLatestPage(page)
+    except:
+      traceback.print_exc()
+      return Response(status=500)
+
+    # Prefetch next page to cache
+    executor.submit(getLatestPage, page + 1)
     return Response(
         json.dumps(v),
         status=200
@@ -38,20 +44,26 @@ def getApp(developmentHost = None):
 
   @app.route("/api/popular")
   def popular():
-    page = noneOr(request.args.get('page'), "1")
-    cacheV = 'popular-%s' % page
-    v = cache.get(cacheV)
-    if v is None:
-      print("'%s' Not found in cache, refreshing..." % cacheV)
-      try:
+    def getPopularPage(page):
+      cacheV = 'popular-%d' % page
+      v = cache.get(cacheV)
+      if v is None:
         v = getPopularMiku(page)
         cache.set(cacheV, v, 10 * 60)
-      except:
-        traceback.print_exc()
-        return Response(status=500)
+      return v
+
+    try:
+      page = int(noneOr(request.args.get('page'), 1))
+      v = getPopularPage(page)
+    except:
+      traceback.print_exc()
+      return Response(status=500)
+
+    # Prefetch next page to cache
+    executor.submit(getPopularPage, page + 1)
     return Response(
-        json.dumps(v),
-        status=200
+      json.dumps(v),
+      status=200
     )
 
   if developmentHost is None:
@@ -61,7 +73,7 @@ def getApp(developmentHost = None):
     @app.route('/', defaults={'path': ''})
     @app.route('/<path:path>')
     def devproxy(path):
-      print("dev proxy: " + f'{developmentHost}/{path}')
+      # print("dev proxy: " + f'{developmentHost}/{path}')
       return get(f'{developmentHost}/{path}').content
 
   return app
