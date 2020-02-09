@@ -20,17 +20,18 @@ def getApp(developmentHost = None):
 
   @app.route("/api/latest")
   def latest():
-    def getLatestPage(page):
-      cacheV = 'latest-%d' % page
+    def getLatestPage(page, year):
+      cacheV = 'latest-%d-%s' % (page, year)
       v = cache.get(cacheV)
       if v is None:
-        v = getLatestMiku(page)
+        v = getLatestMiku(page, year)
         cache.set(cacheV, v, 10 * 60)
       return v
     
     try:
       page = int(noneOr(request.args.get('page'), "1"))
-      v = getLatestPage(page)
+      year = noneOr(request.args.get('year'), "2020")
+      v = getLatestPage(page, year)
     except:
       traceback.print_exc()
       return Response(status=500)
@@ -44,17 +45,18 @@ def getApp(developmentHost = None):
 
   @app.route("/api/popular")
   def popular():
-    def getPopularPage(page):
-      cacheV = 'popular-%d' % page
+    def getPopularPage(page, year):
+      cacheV = 'popular-%d-%s' % (page, year)
       v = cache.get(cacheV)
       if v is None:
-        v = getPopularMiku(page)
+        v = getPopularMiku(page, year)
         cache.set(cacheV, v, 10 * 60)
       return v
 
     try:
       page = int(noneOr(request.args.get('page'), 1))
-      v = getPopularPage(page)
+      year = noneOr(request.args.get('year'), "2020")
+      v = getPopularPage(page, year)
     except:
       traceback.print_exc()
       return Response(status=500)

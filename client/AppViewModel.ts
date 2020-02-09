@@ -15,9 +15,13 @@ class AppViewModel {
   @observable public viewMode: ViewMode = 'Latest'
   @observable public currentPage: number = 1
   @observable public pageCount: number = 1
+  @observable public year: string = '2020'
 
   public constructor() {
-    const params = new URL(window.location.href).searchParams
+    const currentUrl = new URL(window.location.href)
+    const params = currentUrl.searchParams
+    const path = currentUrl.pathname
+    console.log('path:', path)
     switch (params.get('viewMode')){
       case 'Popular':
         this.viewMode = 'Popular'
@@ -36,6 +40,7 @@ class AppViewModel {
     url.search = ""
     url.pathname = (this.viewMode === 'Latest' ? '/api/latest' : '/api/popular')
     url.searchParams.set('page', String(this.currentPage))
+    url.searchParams.set('year', String(this.year))
     fetch(url.href).then(async r => {
       const data = await r.json()
       this.imagesInfos = data.results

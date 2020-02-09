@@ -2,8 +2,17 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
-latestUrl = "https://piapro.jp/pages/official_collabo/2020snowmiku/list?page=%s"
-popularUrl = "https://piapro.jp/content_list/?view=image&tag=%%EF%%BC%%92%%EF%%BC%%90%%EF%%BC%%92%%EF%%BC%%90%%E5%%B9%%B4%%E9%%9B%%AA%%E3%%83%%9F%%E3%%82%%AF%%E8%%A1%%A3%%E8%%A3%%85&order=cv&page=%s"
+popularYearTag = {
+  "2020": "%EF%BC%92%EF%BC%90%EF%BC%92%EF%BC%90",
+  "2019": "%EF%BC%92%EF%BC%90%EF%BC%91%EF%BC%99",
+  "2018": "%EF%BC%92%EF%BC%90%EF%BC%91%EF%BC%98",
+  "2017": "%EF%BC%92%EF%BC%90%EF%BC%91%EF%BC%97",
+  "2016": "%EF%BC%92%EF%BC%90%EF%BC%91%EF%BC%96",
+  "2015": "%EF%BC%92%EF%BC%90%EF%BC%91%EF%BC%95",
+}
+
+latestUrl = "https://piapro.jp/pages/official_collabo/%ssnowmiku/list?page=%s"
+popularUrl = "https://piapro.jp/content_list/?view=image&tag=%s%%E5%%B9%%B4%%E9%%9B%%AA%%E3%%83%%9F%%E3%%82%%AF%%E8%%A1%%A3%%E8%%A3%%85&order=cv&page=%s"
 imageRegex = re.compile('url\(//(.*)(0150_0150)(\..*)\)')
 paginatorRegex = re.compile('new Paginator\(\'_paginator\', ([0-9]*)')
 
@@ -26,14 +35,14 @@ def processItem(item):
     'image': getImageLink(linkElem.attrs['style'])
   }
 
-def getLatestMiku(page = "1"):
-  return processPage(latestUrl, page)
+def getLatestMiku(page = "1", year = "2020"):
+  return processPage(latestUrl, year, page)
 
-def getPopularMiku(page="1"):
-  return processPage(popularUrl, page)
+def getPopularMiku(page="1", year = "2020"):
+  return processPage(popularUrl, popularYearTag[year], page)
 
-def processPage(url, page):
-  url = (url % page)
+def processPage(url, yearTag, page):
+  url = (url % (yearTag, page))
   r = requests.get(url)
   if r.status_code != 200:
     raise Exception("Bad status: %d" % r.status_code)
