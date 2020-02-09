@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-globals */
+
 import {observable} from 'mobx'
 
 export interface ImageInfo {

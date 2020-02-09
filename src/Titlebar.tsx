@@ -1,4 +1,6 @@
-import * as ClassNames from 'classnames'
+/* eslint-disable jsx-a11y/anchor-is-valid */
+
+import ClassNames from 'classnames'
 import { observable } from 'mobx'
 import { observer } from 'mobx-react'
 import * as React from 'react'
