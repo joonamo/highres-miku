@@ -21,7 +21,6 @@ class AppViewModel {
     const currentUrl = new URL(window.location.href)
     const params = currentUrl.searchParams
     const path = currentUrl.pathname
-    console.log('path:', path)
     switch (params.get('viewMode')){
       case 'Popular':
         this.viewMode = 'Popular'
@@ -32,6 +31,8 @@ class AppViewModel {
         break
     }
     this.currentPage = params.has('page') ? Number(params.get('page')) : 1
+    const found = /\/(20\d\d)(\/|$)/.exec(path)
+    this.year = (found && found[1]) || "2020"
   }
 
   public reloadImages() {

@@ -23,7 +23,7 @@ export class Titlebar extends React.Component {
       <nav className="navbar is-info is-fixed-top" role="navigation" aria-label="main navigation">
         <div className="navbar-brand">
           <a className="navbar-item" href="/">
-            <p className="title has-text-white">Snow Miku 2020</p>
+            <p className="title has-text-white">Snow Miku {appViewModel.year}</p>
           </a>
 
           <a
