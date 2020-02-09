@@ -43,7 +43,10 @@ def getPopularMiku(page="1", year = "2020"):
 
 def processPage(url, yearTag, page):
   url = (url % (yearTag, page))
-  r = requests.get(url)
+  try:
+    r = requests.get(url)
+  except requests.exceptions.SSLError:
+    r = requests.get(url, verify="certs/piapro-jp-chain.pem")
   if r.status_code != 200:
     raise Exception("Bad status: %d" % r.status_code)
   soup = BeautifulSoup(r.text, 'html.parser')
