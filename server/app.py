@@ -18,6 +18,10 @@ def getApp(developmentHost = None):
   cache = SimpleCache()
   app = Flask(__name__, static_folder=None)
 
+  @app.route("/api/healthcheck")
+  def healthCheck():
+    return Response("ok", status=200)
+
   @app.route("/api/latest")
   def latest():
     def getLatestPage(page, year):
