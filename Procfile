@@ -1,1 +1,1 @@
-web: gunicorn server.app:'getApp()' --workers=1
+web: gunicorn server.app:'getApp()' --workers=1 --bind=0.0.0.0:3939
