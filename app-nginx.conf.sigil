@@ -21,8 +21,12 @@ http {
     index index.html;
     port_in_redirect off;
 
-    location / {
+    location /api/ {
       proxy_pass http://localhost:3939;
+    }
+    
+    location / {
+      try_files $uri $uri/ /index.html;
     }
   }
 }
