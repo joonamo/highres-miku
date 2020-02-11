@@ -2,7 +2,6 @@ from flask import Flask, Response, request, after_this_request
 import json
 from server.miku_scrape import getLatestMiku, getPopularMiku
 from werkzeug.contrib.cache import SimpleCache
-from whitenoise import WhiteNoise
 import traceback
 from requests import get
 from concurrent.futures import ThreadPoolExecutor
@@ -72,10 +71,7 @@ def getApp(developmentHost = None):
       status=200
     )
 
-  if developmentHost is None:
-    app.wsgi_app = WhiteNoise(
-        app.wsgi_app, root='build/', index_file=True, autorefresh=True)
-  else:
+  if developmentHost is not None:
     @app.route('/', defaults={'path': ''})
     @app.route('/<path:path>')
     def devproxy(path):
