@@ -10,23 +10,43 @@ import { appViewModel } from './AppViewModel'
 export class Titlebar extends React.Component {
   @observable private burgerOpen: boolean = false
   @observable private sortDropdownOpen: boolean = false
+  @observable private yearDropdownOpen: boolean = false
 
-  constructor(props: any) {
-    super(props)
+  yearItem = (year: string) =>
+    <a className="navbar-item" onClick={this.makeYearSetter(year)}>{year}</a>
 
-    this.toggleBurger = this.toggleBurger.bind(this)
-    this.toggleSortDropdown = this.toggleSortDropdown.bind(this)
-    this.setLatest = this.setLatest.bind(this)
-    this.setPopular = this.setPopular.bind(this)
-  }
+  yearSelector = (isTitle: boolean) =>
+    <div className={ClassNames(
+      "navbar-item",
+      "has-dropdown",
+      { 'is-active': this.yearDropdownOpen },
+      isTitle ? "is-hidden-touch" : "is-hidden-desktop")}>
+      <a className="navbar-link navbar-item" onClick={this.toggleYearDropdown}>
+        <p className={isTitle ? "title has-text-white" : ""}>{!isTitle ? "Year:" : ""} {appViewModel.year}</p>
+      </a>
+
+      <div className={ClassNames("navbar-dropdown", { 'is-hidden-touch': !this.yearDropdownOpen })}>
+        {this.yearItem("2020")}
+        {this.yearItem("2019")}
+        {this.yearItem("2018")}
+        {this.yearItem("2017")}
+        {this.yearItem("2016")}
+        {this.yearItem("2015")}
+      </div>
+    </div>
 
   public render() {
     return (
       <nav className="navbar is-info is-fixed-top" role="navigation" aria-label="main navigation">
         <div className="navbar-brand">
-          <a className="navbar-item" href="/">
+          <a className="navbar-item is-hidden-touch" href="/">
+            <p className="title has-text-white">Snow Miku</p>
+          </a>
+          <a className="navbar-item is-hidden-desktop" href="/">
             <p className="title has-text-white">Snow Miku {appViewModel.year}</p>
           </a>
+
+          {this.yearSelector(true)}
 
           <a
             role="button"
@@ -42,12 +62,14 @@ export class Titlebar extends React.Component {
 
         <div className={ClassNames("navbar-menu", { 'is-active': this.burgerOpen })}>
           <div className="navbar-start">
+            {this.yearSelector(false)}
+
             <div className={ClassNames("navbar-item", "has-dropdown", { 'is-active': this.sortDropdownOpen })}>
               <a className="navbar-link" onClick={this.toggleSortDropdown}>
                 {`Sort: ${appViewModel.viewMode}`}
               </a>
 
-              <div className={ClassNames("navbar-dropdown", {'is-hidden-touch': !this.sortDropdownOpen})}>
+              <div className={ClassNames("navbar-dropdown", { 'is-hidden-touch': !this.sortDropdownOpen })}>
                 <a className="navbar-item" onClick={this.setLatest}>
                   Latest
                 </a>
@@ -70,27 +92,47 @@ export class Titlebar extends React.Component {
                 <i className="fas fa-external-link-alt" />
               </span>
             </a>
-            
+
           </div>
         </div>
       </nav>
     )
   }
 
-  private toggleBurger() {
+  private toggleBurger = () => {
     this.burgerOpen = !this.burgerOpen
+    this.closeAll()
   }
-  private toggleSortDropdown() {
-    this.sortDropdownOpen = !this.sortDropdownOpen
+  private toggleSortDropdown = () => {
+    if (this.sortDropdownOpen) {
+      this.sortDropdownOpen = false
+    } else {
+      this.closeAll()
+      this.sortDropdownOpen = true
+    }
   }
-  private setLatest() {
+  private toggleYearDropdown = () => {
+    if (this.yearDropdownOpen) {
+      this.yearDropdownOpen = false
+    } else {
+      this.closeAll()
+      this.yearDropdownOpen = true
+    }
+  }
+  private setLatest = () => {
     appViewModel.setViewMode('Latest')
-    this.sortDropdownOpen = false
-    this.burgerOpen = false
+    this.closeAll()
   }
-  private setPopular() {
+  private setPopular = () => {
     appViewModel.setViewMode('Popular')
+    this.closeAll()
+  }
+  private makeYearSetter = (year: string) => () => {
+    appViewModel.setYear(year)
+    this.closeAll()
+  }
+  private closeAll = () => {
+    this.yearDropdownOpen = false
     this.sortDropdownOpen = false
-    this.burgerOpen = false
   }
 }

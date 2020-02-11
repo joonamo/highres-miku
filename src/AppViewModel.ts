@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-globals */
 
-import {observable} from 'mobx'
+import { observable } from 'mobx'
 
 export interface ImageInfo {
   name: string,
@@ -10,31 +10,34 @@ export interface ImageInfo {
 }
 
 export type ViewMode = 'Latest' | 'Popular'
+const defaultViewMode = 'Popular'
+const defaultYear = '2020'
 
 class AppViewModel {
   @observable public imagesInfos: ImageInfo[] = []
   @observable public isLoading: boolean = false
-  @observable public viewMode: ViewMode = 'Latest'
+  @observable public viewMode: ViewMode = defaultViewMode
+  @observable public year: string = defaultYear
   @observable public currentPage: number = 1
   @observable public pageCount: number = 1
-  @observable public year: string = '2020'
 
   public constructor() {
     const currentUrl = new URL(window.location.href)
     const params = currentUrl.searchParams
     const path = currentUrl.pathname
-    switch (params.get('viewMode')){
+    switch (params.get('viewMode')) {
       case 'Popular':
         this.viewMode = 'Popular'
         break
-      default:
       case 'Latest':
         this.viewMode = 'Latest'
         break
+      default:
+        this.viewMode = defaultViewMode
     }
     this.currentPage = params.has('page') ? Number(params.get('page')) : 1
     const found = /\/(20\d\d)(\/|$)/.exec(path)
-    this.year = (found && found[1]) || "2020"
+    this.year = (found && found[1]) || defaultYear
   }
 
   public reloadImages() {
@@ -49,10 +52,10 @@ class AppViewModel {
       this.imagesInfos = data.results
       this.pageCount = Number(data.pageCount)
     })
-    .catch(e => console.log(e))
-    .finally(() => {
-      this.isLoading = false
-    })
+      .catch(e => console.log(e))
+      .finally(() => {
+        this.isLoading = false
+      })
   }
 
   public setViewMode(mode: ViewMode) {
@@ -64,9 +67,18 @@ class AppViewModel {
     }
   }
 
+  public setYear(year: string) {
+    if (year !== this.year) {
+      this.currentPage = 1
+      this.year = year
+      this.reloadImages()
+      this.setSearchParams()
+    }
+  }
+
   public setPage(page: number) {
     if (this.currentPage !== page) {
-      this.currentPage = Math.min(Math.max(page, 1), this.pageCount +1)
+      this.currentPage = Math.min(Math.max(page, 1), this.pageCount + 1)
       this.reloadImages()
       this.setSearchParams()
     }
@@ -74,6 +86,7 @@ class AppViewModel {
 
   private setSearchParams() {
     const url = new URL(window.location.href)
+    url.pathname = `/${this.year}`
     url.search = ""
     url.searchParams.set('page', String(this.currentPage))
     url.searchParams.set('viewMode', this.viewMode)
