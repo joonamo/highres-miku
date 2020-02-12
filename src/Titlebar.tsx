@@ -100,14 +100,17 @@ export class Titlebar extends React.Component {
   }
 
   private toggleBurger = () => {
-    this.burgerOpen = !this.burgerOpen
-    this.closeAll()
+    if (this.burgerOpen) {
+      this.closeAll()
+    } else {
+      this.burgerOpen = true
+    }
   }
   private toggleSortDropdown = () => {
     if (this.sortDropdownOpen) {
       this.sortDropdownOpen = false
     } else {
-      this.closeAll()
+      this.closeSubmenus()
       this.sortDropdownOpen = true
     }
   }
@@ -115,7 +118,7 @@ export class Titlebar extends React.Component {
     if (this.yearDropdownOpen) {
       this.yearDropdownOpen = false
     } else {
-      this.closeAll()
+      this.closeSubmenus()
       this.yearDropdownOpen = true
     }
   }
@@ -131,8 +134,12 @@ export class Titlebar extends React.Component {
     appViewModel.setYear(year)
     this.closeAll()
   }
-  private closeAll = () => {
+  private closeSubmenus = () => {
     this.yearDropdownOpen = false
     this.sortDropdownOpen = false
+  }
+  private closeAll = () => {
+    this.closeSubmenus()
+    this.burgerOpen = false
   }
 }
