@@ -5,6 +5,7 @@ import { Loading } from './Loading'
 import { Paginator } from './Paginator'
 import { Titlebar } from './Titlebar'
 import { Disclaimer } from './Disclaimer'
+import { Helmet } from 'react-helmet'
 
 const renderResult = (result: ImageInfo | undefined) => {
   return !!result
@@ -59,6 +60,10 @@ class App extends React.Component {
   }
   public render() {
     return (<>
+      <Helmet>
+        <title>Snow Miku {appViewModel.year}</title>
+        <meta name="description" content={`Browse Snow Miku ${appViewModel.year} design competition entries in high resolution gallery`} />
+      </Helmet>
       <Titlebar />
       <section className="section">
         <div className="container">
