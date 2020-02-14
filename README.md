@@ -4,6 +4,6 @@ Simple Python Flask and React app for scraping and displaying slightly more high
 
 Tested to run on Dokku-host, should also work in Heroku.
 
-[Live application](http://snowmiku.joonamo.com)
+Check it out at [https://snowmiku.net](https://snowmiku.net)!
 
 Licenced under MIT licence, see LICENCE file.
