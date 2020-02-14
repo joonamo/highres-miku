@@ -4,6 +4,7 @@ import { appViewModel, ImageInfo } from './AppViewModel'
 import { Loading } from './Loading'
 import { Paginator } from './Paginator'
 import { Titlebar } from './Titlebar'
+import { Disclaimer } from './Disclaimer'
 
 const renderResult = (result: ImageInfo | undefined) => {
   return !!result
@@ -70,9 +71,14 @@ class App extends React.Component {
                 : <>
                   {renderResults(appViewModel.imagesInfos)}
                   <Paginator />
-                  </>
+                </>
             }
           </div>
+        </div>
+      </section>
+      <section className="section">
+        <div className="container">
+          <Disclaimer />
         </div>
       </section>
     </>

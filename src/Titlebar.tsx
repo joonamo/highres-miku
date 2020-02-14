@@ -37,7 +37,7 @@ export class Titlebar extends React.Component {
 
   public render() {
     return (
-      <nav className="navbar is-info is-fixed-top" role="navigation" aria-label="main navigation">
+      <nav className="navbar is-info is-fixed-top add-shadow" role="navigation" aria-label="main navigation">
         <div className="navbar-brand">
           <a className="navbar-item is-hidden-touch" href="/">
             <p className="title has-text-white">Snow Miku</p>
