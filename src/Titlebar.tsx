@@ -5,6 +5,7 @@ import { observable } from 'mobx'
 import { observer } from 'mobx-react'
 import * as React from 'react'
 import { appViewModel } from './AppViewModel'
+import { Logo } from './logo'
 
 @observer
 export class Titlebar extends React.Component {
@@ -38,13 +39,17 @@ export class Titlebar extends React.Component {
   public render() {
     return (
       <nav className="navbar is-info is-fixed-top add-shadow" role="navigation" aria-label="main navigation">
+        <div className="logo-container">
+          <Logo />
+        </div>
         <div className="navbar-brand">
-          <a className="navbar-item is-hidden-touch" href="/">
+
+          <div className="navbar-item is-paddingless is-hidden-touch">
             <p className="title has-text-white">Snow Miku</p>
-          </a>
-          <a className="navbar-item is-hidden-desktop" href="/">
-            <p className="title has-text-white">Snow Miku {appViewModel.year}</p>
-          </a>
+          </div>
+          <div className="is-paddingless navbar-item is-hidden-desktop flex-1">
+            <p className="title flex-1 has-text-white has-text-right-mobile">Snow Miku {appViewModel.year}</p>
+          </div>
 
           {this.yearSelector(true)}
 
@@ -80,7 +85,7 @@ export class Titlebar extends React.Component {
             </div>
 
             <a href="https://piapro.jp/pages/official_collabo/2020snowmiku/index" target="blank" className="navbar-item">
-              <span>Official contest pages </span>
+              <span>Official pages</span>
               <span className="icon">
                 <i className="fas fa-external-link-alt" />
               </span>
