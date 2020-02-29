@@ -13,8 +13,17 @@ export class Titlebar extends React.Component {
   @observable private sortDropdownOpen: boolean = false
   @observable private yearDropdownOpen: boolean = false
 
-  yearItem = (year: string) =>
-    <a className="navbar-item" onClick={this.makeYearSetter(year)}>{year}</a>
+  generateYearSelectors = () => {
+    if (appViewModel.configuration) {
+      const selectors = []
+      for (let year = appViewModel.configuration.latestYear; year >= appViewModel.configuration.firstYear; year--) {
+        selectors.push(<a className="navbar-item" onClick={this.makeYearSetter(String(year))}>{year}</a>)
+      }
+      return selectors
+    } else {
+      return null
+    }
+  }
 
   yearSelector = (isTitle: boolean) =>
     <div className={ClassNames(
@@ -27,12 +36,7 @@ export class Titlebar extends React.Component {
       </a>
 
       <div className={ClassNames("navbar-dropdown", { 'is-hidden-touch': !this.yearDropdownOpen })}>
-        {this.yearItem("2020")}
-        {this.yearItem("2019")}
-        {this.yearItem("2018")}
-        {this.yearItem("2017")}
-        {this.yearItem("2016")}
-        {this.yearItem("2015")}
+        {this.generateYearSelectors()}
       </div>
     </div>
 

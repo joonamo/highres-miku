@@ -43,7 +43,6 @@ def getPopularMiku(page="1", year = "2020"):
 
 def processPage(url, yearTag, orderTag, page):
   url = (url % (yearTag, orderTag, page))
-  print(url)
   cacheV = cache.get(url)
   if cacheV is None:
     try:

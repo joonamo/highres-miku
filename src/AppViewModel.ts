@@ -9,19 +9,26 @@ export interface ImageInfo {
   image: string
 }
 
+export interface Configuration {
+  latestYear: number,
+  firstYear: number
+}
+
 export type ViewMode = 'Latest' | 'Popular'
-const defaultViewMode = 'Popular'
-const defaultYear = '2020'
+const defaultViewMode = 'Latest'
 
 class AppViewModel {
   @observable public imagesInfos: ImageInfo[] = []
   @observable public isLoading: boolean = false
   @observable public viewMode: ViewMode = defaultViewMode
-  @observable public year: string = defaultYear
+  @observable public year: string | null = null
   @observable public currentPage: number = 1
   @observable public pageCount: number = 1
+  @observable public configuration: Configuration | null = null
 
   public constructor() {
+    this.loadConfig()
+
     const currentUrl = new URL(window.location.href)
     const params = currentUrl.searchParams
     const path = currentUrl.pathname
@@ -37,7 +44,17 @@ class AppViewModel {
     }
     this.currentPage = params.has('page') ? Number(params.get('page')) : 1
     const found = /\/(20\d\d)(\/|$)/.exec(path)
-    this.year = (found && found[1]) || defaultYear
+    if (found && found[1]) {
+      this.setYear(found[1])
+    }
+  }
+
+  public async loadConfig() {
+    this.configuration = await (await fetch('/api/configuration')).json() as any
+
+    if (!this.year && this.configuration?.latestYear) {
+      this.setYear(String(this.configuration?.latestYear))
+    }
   }
 
   public reloadImages() {

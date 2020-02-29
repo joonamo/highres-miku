@@ -55,14 +55,11 @@ const renderResults = (results: ImageInfo[], depth: number = 0): JSX.Element[] |
 
 @observer
 class App extends React.Component {
-  public componentDidMount() {
-    appViewModel.reloadImages()
-  }
   public render() {
     return (<>
       <Helmet>
-        <title>Snow Miku {appViewModel.year}</title>
-        <meta name="description" content={`Browse Snow Miku ${appViewModel.year} design competition entries in high resolution gallery`} />
+        <title>Snow Miku {appViewModel.year ?? ""}</title>
+        <meta name="description" content={`Browse Snow Miku ${appViewModel.year ?? ""} design competition entries in high resolution gallery`} />
       </Helmet>
       <Titlebar />
       <section className="section">
@@ -71,7 +68,7 @@ class App extends React.Component {
           <div>
             <Paginator />
             {
-              appViewModel.isLoading
+              !appViewModel.configuration || appViewModel.isLoading
                 ? <Loading />
                 : <>
                   {renderResults(appViewModel.imagesInfos)}
