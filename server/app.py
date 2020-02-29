@@ -1,10 +1,9 @@
 from flask import Flask, Response, request, after_this_request
 import json
-from server.miku_scrape import getLatestMiku, getPopularMiku
-from werkzeug.contrib.cache import SimpleCache
+from server.miku_scrape import getLatestMiku, getPopularMiku, getLatestYear
+from server.executor import executor
 import traceback
 from requests import get
-from concurrent.futures import ThreadPoolExecutor
 
 def noneOr(v, v1):
   if v is None:
@@ -13,8 +12,6 @@ def noneOr(v, v1):
     return v
 
 def getApp(developmentHost = None):
-  executor = ThreadPoolExecutor(2)
-  cache = SimpleCache()
   app = Flask(__name__, static_folder=None)
 
   @app.route("/api/healthcheck")
@@ -22,25 +19,17 @@ def getApp(developmentHost = None):
     return Response("ok", status=200)
 
   @app.route("/api/latest")
-  def latest():
-    def getLatestPage(page, year):
-      cacheV = 'latest-%d-%s' % (page, year)
-      v = cache.get(cacheV)
-      if v is None:
-        v = getLatestMiku(page, year)
-        cache.set(cacheV, v, 10 * 60)
-      return v
-    
+  def latest():    
     try:
       page = int(noneOr(request.args.get('page'), "1"))
       year = noneOr(request.args.get('year'), "2020")
-      v = getLatestPage(page, year)
+      v = getLatestMiku(page, year)
     except:
       traceback.print_exc()
       return Response(status=500)
 
     # Prefetch next page to cache
-    executor.submit(getLatestPage, page + 1)
+    executor.submit(getLatestMiku, page + 1, year)
     return Response(
         json.dumps(v),
         status=200
@@ -48,26 +37,29 @@ def getApp(developmentHost = None):
 
   @app.route("/api/popular")
   def popular():
-    def getPopularPage(page, year):
-      cacheV = 'popular-%d-%s' % (page, year)
-      v = cache.get(cacheV)
-      if v is None:
-        v = getPopularMiku(page, year)
-        cache.set(cacheV, v, 10 * 60)
-      return v
-
     try:
       page = int(noneOr(request.args.get('page'), 1))
       year = noneOr(request.args.get('year'), "2020")
-      v = getPopularPage(page, year)
+      v = getPopularMiku(page, year)
     except:
       traceback.print_exc()
       return Response(status=500)
 
     # Prefetch next page to cache
-    executor.submit(getPopularPage, page + 1)
+    executor.submit(getPopularMiku, page + 1, year)
     return Response(
       json.dumps(v),
+      status=200
+    )
+  
+  @app.route("/api/configuration")
+  def configuration():
+    res = {
+      "firstYear": 2012,
+      "latestYear": getLatestYear()
+    }
+    return Response(
+      json.dumps(res),
       status=200
     )
 
