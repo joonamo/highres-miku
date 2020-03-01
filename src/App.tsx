@@ -10,7 +10,7 @@ import { Helmet } from 'react-helmet'
 const renderResult = (result: ImageInfo | undefined) => {
   return !!result
     ? (
-      <div className="tile is-parent">
+      <div className="tile is-parent" key={result.link}>
         <div
           className="tile is-child card"
           key={result.link}>
@@ -66,13 +66,13 @@ class App extends React.Component {
         <div className="container">
           <h2 className="title is-hidden-desktop">{appViewModel.viewMode === "Popular" ? "Most Popular Entries" : "Latest Entries"}</h2>
           <div>
-            <Paginator />
+            <Paginator key="head-paginator" />
             {
               !appViewModel.configuration || appViewModel.isLoading
-                ? <Loading />
+                ? <Loading key="loader" />
                 : <>
                   {renderResults(appViewModel.imagesInfos)}
-                  <Paginator />
+                  <Paginator key="footer-paginator" />
                 </>
             }
           </div>

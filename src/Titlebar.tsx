@@ -17,7 +17,12 @@ export class Titlebar extends React.Component {
     if (appViewModel.configuration) {
       const selectors = []
       for (let year = appViewModel.configuration.latestYear; year >= appViewModel.configuration.firstYear; year--) {
-        selectors.push(<a className="navbar-item" onClick={this.makeYearSetter(String(year))}>{year}</a>)
+        selectors.push(<a
+          className="navbar-item"
+          onClick={this.makeYearSetter(String(year))}
+          key={`year-selector-${year}`}>
+          {year}
+        </a>)
       }
       return selectors
     } else {
