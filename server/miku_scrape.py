@@ -60,18 +60,25 @@ async def processPage(url, yearTag, orderTag, page):
     cache.set(url, cacheV, 5 * 60)
   return cacheV
 
+async def resultsWithYear(year):
+  return {
+    'results': await getLatestMiku("1", str(year)),
+    'year': year
+  }
+
 async def getLatestYear():
   cacheV = cache.get("latest-year")
   if cacheV is None:
     currentYear = datetime.now().year
-    for year in reversed(range(2012, currentYear + 2)):
-      try:
-        latest = await getLatestMiku("1", str(year))
-        if len(latest["results"]) > 0:
-          cacheV = year
-          cache.set("latest-year", cacheV, 60 * 60)
-          break
-      except:
-        pass
+    years = await asyncio.gather(*[
+      resultsWithYear(year) 
+      for year
+      in reversed(range(2020, currentYear + 2))
+    ])
+    for year in years:
+      if len(year["results"]["results"]) > 0:
+        cacheV = year["year"]
+        cache.set("latest-year", cacheV, 60 * 60)
+        break
   asyncio.ensure_future(getPopularMiku("1", str(cacheV)))
   return cacheV
