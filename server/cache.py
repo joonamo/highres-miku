@@ -1,3 +1,3 @@
-from werkzeug.contrib.cache import SimpleCache
+from cachelib.simple import SimpleCache
 
 cache = SimpleCache()

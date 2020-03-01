@@ -5,14 +5,18 @@ verify_ssl = true
 
 [dev-packages]
 autopep8 = "*"
+ipython = "*"
 
 [packages]
 beautifulsoup4 = "*"
-gunicorn = "*"
-requests = "*"
-flask = "*"
 flask-cors = "*"
-werkzeug = "==0.16.0"
+quart = "==0.11.3"
+werkzeug = "==1.0.0"
+cachelib = "*"
+cchardet = "*"
+aiodns = "*"
+httpx = "*"
+hypercorn = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.8.1"

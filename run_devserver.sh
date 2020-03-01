@@ -1,3 +1,3 @@
-export FLASK_DEBUG=1
-export FLASK_APP=server/devserver.py
-flask run
+export QUART_DEBUG=1
+export QUART_APP=server.devserver:'app'
+quart run
