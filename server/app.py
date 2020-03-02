@@ -1,4 +1,4 @@
-from quart import Quart, Response, request, after_this_request
+from fastapi import FastAPI, Response
 import json
 from server.miku_scrape import getLatestMiku, getPopularMiku, getLatestYear
 from server.executor import executor
@@ -7,74 +7,48 @@ import httpx
 import traceback
 from server.async_http_client import deleteClient, getClient
 
-def noneOr(v, v1):
-  if v is None:
-    return v1
-  else:
-    return v
-
 def getApp(developmentHost = None):
-  app = Quart(__name__, static_folder=None)
+  app = FastAPI(debug=developmentHost is not None)
 
-  @app.after_serving
+  @app.on_event("shutdown")
   async def shutdown():
     await deleteClient()
 
-  @app.route("/api/healthcheck")
+  @app.get("/api/healthcheck")
   async def healthCheck():
-    return Response("ok", status=200)
+    return "ok"
 
-  @app.route("/api/latest")
-  async def latest():    
-    try:
-      page = int(noneOr(request.args.get('page'), "1"))
-      year = noneOr(request.args.get('year'), "2020")
-      v = await getLatestMiku(page, year)
-    except:
-      traceback.print_exc()
-      return Response(status=500)
+  @app.get("/api/latest")
+  async def latest(page: int = 1, year: str = "2020"):    
+    v = await getLatestMiku(page, year)
 
     # Prefetch next page to cache
     asyncio.ensure_future(getLatestMiku(page + 1, year))
-    return Response(
-        json.dumps(v),
-        status=200
-    )
+    return v
 
-  @app.route("/api/popular")
-  async def popular():
-    try:
-      page = int(noneOr(request.args.get('page'), 1))
-      year = noneOr(request.args.get('year'), "2020")
-      v = await getPopularMiku(page, year)
-    except:
-      traceback.print_exc()
-      return Response(status=500)
 
+  @app.get("/api/popular")
+  async def popular(page: int = 1, year: str = "2020"):
+    v = await getPopularMiku(page, year)
     # Prefetch next page to cache
     asyncio.ensure_future(getPopularMiku(page + 1, year))
-    return Response(
-      json.dumps(v),
-      status=200
-    )
+    return v
   
-  @app.route("/api/configuration")
+  @app.get("/api/configuration")
   async def configuration():
     res = {
       "firstYear": 2012,
       "latestYear": await getLatestYear()
     }
-    return Response(
-      json.dumps(res),
-      status=200
-    )
+    return res
 
   if developmentHost is not None:
-    @app.route('/', defaults={'path': ''})
-    @app.route('/<path:path>')
-    async def devproxy(path):
+    @app.get('/{file_path:path}')
+    async def devproxy(file_path: str):
       client = getClient()
-      res = await client.get(f'{developmentHost}/{path}')
-      return res.text
+      res = await client.get(f'{developmentHost}/{file_path}')
+      return Response(
+        content=res.text,
+        media_type=res.headers.get('content-type'))
 
   return app

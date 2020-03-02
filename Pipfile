@@ -10,13 +10,14 @@ ipython = "*"
 [packages]
 beautifulsoup4 = "*"
 flask-cors = "*"
-quart = "==0.11.3"
 werkzeug = "==1.0.0"
 cachelib = "*"
 cchardet = "*"
 aiodns = "*"
 httpx = "*"
-hypercorn = "*"
+fastapi = "*"
+uvicorn = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.8.1"

@@ -3,7 +3,6 @@ import re
 from datetime import datetime
 from server.cache import cache
 from server.executor import executor
-import quart
 import asyncio
 from server.async_http_client import getClient
 
@@ -47,7 +46,7 @@ async def processPage(url, yearTag, orderTag, page):
   url = (url % (yearTag, orderTag, page))
   cacheV = cache.get(url)
   if cacheV is None:
-    print("calling", url)
+    print("Calling", url)
     client = getClient()
     r = await client.get(url)
     if r.status_code != 200:
