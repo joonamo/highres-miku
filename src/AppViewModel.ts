@@ -15,7 +15,7 @@ export interface Configuration {
 }
 
 export type ViewMode = 'Latest' | 'Popular'
-const defaultViewMode = 'Latest'
+const defaultViewMode = process.env.REACT_APP_DEFAULT_VIEW_MODE as ViewMode || 'Popular'
 
 class AppViewModel {
   @observable public imagesInfos: ImageInfo[] = []
