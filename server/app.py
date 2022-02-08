@@ -14,11 +14,11 @@ def getApp(developmentHost = None):
   async def shutdown():
     await deleteClient()
 
-  @app.get("/api/healthcheck")
+  @app.get("/healthcheck")
   async def healthCheck():
     return "ok"
 
-  @app.get("/api/latest")
+  @app.get("/latest")
   async def latest(page: int = 1, year: str = "2020"):    
     v = await getLatestMiku(page, year)
 
@@ -27,14 +27,14 @@ def getApp(developmentHost = None):
     return v
 
 
-  @app.get("/api/popular")
+  @app.get("/popular")
   async def popular(page: int = 1, year: str = "2020"):
     v = await getPopularMiku(page, year)
     # Prefetch next page to cache
     asyncio.ensure_future(getPopularMiku(page + 1, year))
     return v
   
-  @app.get("/api/configuration")
+  @app.get("/configuration")
   async def configuration():
     res = {
       "firstYear": 2012,
