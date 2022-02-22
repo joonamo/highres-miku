@@ -1,6 +1,6 @@
 # highres-miku
 
-Simple Python Flask and React app for scraping and displaying slightly more high-res thumbnails for Piapro's Snow Miku contest.
+Simple Python and React app for scraping and displaying slightly more high-res thumbnails for Piapro's Snow Miku contest.
 
 Tested to run on Dokku-host, should also work in Heroku.
 
