@@ -93,15 +93,15 @@ export class Titlebar extends React.Component {
               </div>
             </div>
 
-            <a href="https://piapro.jp/pages/official_collabo/2021snowmiku/index" target="blank" className="navbar-item">
-              <span>Official pages</span>
+            <a href="https://piapro.jp/pages/official_collabo/2023snowmiku_s5gnpkaj/index" target="blank" className="navbar-item">
+              <span>Official Design Contest page</span>
               <span className="icon">
                 <i className="fas fa-external-link-alt" />
               </span>
             </a>
 
-            <a href="https://www.mikufan.com/snow-miku-2021-rabit-yukine-art-design-contest-open-until-april-17th-jst/" target="blank" className="navbar-item">
-              <span>Information in English (mikufan.com) </span>
+            <a href="https://snowmiku.com/" target="blank" className="navbar-item">
+              <span>SnowMiku.com</span>
               <span className="icon">
                 <i className="fas fa-external-link-alt" />
               </span>
