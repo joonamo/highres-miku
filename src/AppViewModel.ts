@@ -1,124 +1,165 @@
-/* eslint-disable no-restricted-globals */
-
-import { observable } from 'mobx'
+/* eslint-disable no-unused-vars */
+import { useCallback, useEffect, useState } from "react"
 
 export interface ImageInfo {
-  name: string,
-  author: string,
-  link: string,
+  name: string
+  author: string
+  link: string
   image: string
 }
 
 export interface Configuration {
-  latestYear: number,
+  latestYear: number
   firstYear: number
 }
 
-export type ViewMode = 'Latest' | 'Popular'
-const defaultViewMode = process.env.REACT_APP_DEFAULT_VIEW_MODE as ViewMode || 'Popular'
+export interface AppViewModel {
+  imagesInfos: ImageInfo[]
+  isLoading: boolean
+  viewMode: ViewMode
+  year: string | null
+  currentPage: number
+  pageCount: number
+  configuration: Configuration | null
+  changeViewMode: (newMode: ViewMode) => void
+  changeYear: (newYear: string) => void
+  changePage: (newPage: number) => void
+}
 
-class AppViewModel {
-  @observable public imagesInfos: ImageInfo[] = []
-  @observable public isLoading: boolean = false
-  @observable public viewMode: ViewMode = defaultViewMode
-  @observable public year: string | null = null
-  @observable public currentPage: number = 1
-  @observable public pageCount: number = 1
-  @observable public configuration: Configuration | null = null
+export type ViewMode = "Latest" | "Popular"
+const defaultViewMode =
+  // eslint-disable-next-line no-undef
+  process.env.REACT_APP_DEFAULT_VIEW_MODE === "Latest" ? "Latest" : "Popular"
 
-  public constructor() {
+export const useAppViewModel = (): AppViewModel => {
+  const [imagesInfos, setImageInfos] = useState<ImageInfo[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [viewMode, setViewMode] = useState<ViewMode>(defaultViewMode)
+  const [year, setYear] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [pageCount, setPageCount] = useState<number>(1)
+  const [configuration, setConfiguration] = useState<Configuration | null>(null)
+
+  // Setup basics
+  useEffect(() => {
     const currentUrl = new URL(window.location.href)
     const path = currentUrl.pathname
     const year = /\/(20\d\d)(\/|$)/.exec(path)
     if (year && year[1]) {
-      this.year = year[1]
+      setYear(year[1])
     }
     const viewMode = /\/(popular|latest)(\/|$)/.exec(path.toLowerCase())
     if (!viewMode) {
-      this.viewMode = defaultViewMode 
-        this.viewMode = defaultViewMode
-      this.viewMode = defaultViewMode 
-        this.viewMode = defaultViewMode
-      this.viewMode = defaultViewMode 
+      setViewMode(defaultViewMode)
     } else {
-      this.viewMode =
-        viewMode[1] === 'popular' ? 'Popular' :
-        viewMode[1] === 'latest' ? 'Latest' :
-        defaultViewMode
+      const newViewMode =
+        viewMode[1] === "popular"
+          ? "Popular"
+          : viewMode[1] === "latest"
+          ? "Latest"
+          : defaultViewMode
+      setViewMode(newViewMode)
     }
     const page = /\/(\d\d?)(\/|$)/.exec(path)
-    if (!page) {
-      this.currentPage = 1
-    } else {
-      this.currentPage = Number(page[1])
+    if (page) {
+      setCurrentPage(Number(page[1]))
     }
 
-    this.loadConfig()
-    if (this.year) {
-      this.reloadImages()
+    const loadConfig = async () => {
+      const newConfiguration = (await (
+        await fetch("/api/configuration")
+      ) /* await fetch("https://snowmiku.net/api/configuration") */
+        .json()) as any
+      setConfiguration(newConfiguration)
+
+      if (!year && newConfiguration?.latestYear) {
+        setYear(String(newConfiguration?.latestYear))
+      }
     }
-  }
 
-  public async loadConfig() {
-    this.configuration = await (await fetch('/api/configuration')).json() as any
+    loadConfig()
+  }, [])
 
-    if (!this.year && this.configuration?.latestYear) {
-      this.year = String(this.configuration?.latestYear)
+  // Reload images
+  useEffect(() => {
+    if (viewMode && currentPage && year) {
+      const url = new URL(window.location.href)
+      // const url = new URL("https://snowmiku.net")
+      setIsLoading(true)
+      url.search = ""
+      url.pathname = viewMode === "Latest" ? "/api/latest" : "/api/popular"
+      url.searchParams.set("page", String(currentPage))
+      url.searchParams.set("year", String(year))
+      fetch(url.href)
+        .then(async (r) => {
+          const data = await r.json()
+          setImageInfos(data.results)
+          setPageCount(Number(data.pageCount))
+        })
+        .catch((e) => console.log(e))
+        .finally(() => {
+          setIsLoading(false)
+        })
     }
-    if (!this.isLoading && this.imagesInfos.length === 0) {
-      this.reloadImages()
-    } 
-  }
+  }, [viewMode, currentPage, year])
 
-  public reloadImages() {
-    this.isLoading = true
-    const url = new URL(window.location.href)
-    url.search = ""
-    url.pathname = (this.viewMode === 'Latest' ? '/api/latest' : '/api/popular')
-    url.searchParams.set('page', String(this.currentPage))
-    url.searchParams.set('year', String(this.year))
-    fetch(url.href).then(async r => {
-      const data = await r.json()
-      this.imagesInfos = data.results
-      this.pageCount = Number(data.pageCount)
-    })
-      .catch(e => console.log(e))
-      .finally(() => {
-        this.isLoading = false
-      })
-  }
+  const setSearchParams = useCallback(
+    (overrides: {
+      year?: string
+      viewMode?: ViewMode
+      currentPage?: number
+    }) => {
+      const url = new URL(window.location.href)
+      url.pathname = `/${overrides.year ?? year}/${(
+        overrides.viewMode ?? viewMode
+      ).toLowerCase()}/${overrides.currentPage ?? currentPage}`
+      history.pushState({}, "", url.href)
+    },
+    [year, viewMode, currentPage]
+  )
 
-  public setViewMode(mode: ViewMode) {
-    if (mode !== this.viewMode) {
-      this.currentPage = 1
-      this.viewMode = mode
-      this.reloadImages()
-      this.setSearchParams()
-    }
-  }
+  const changeViewMode = useCallback(
+    (newMode: ViewMode) => {
+      if (newMode !== viewMode) {
+        setCurrentPage(1)
+        setViewMode(newMode)
+        setSearchParams({ currentPage: 1, viewMode: newMode })
+      }
+    },
+    [viewMode, setSearchParams]
+  )
 
-  public setYear(year: string) {
-    if (year !== this.year) {
-      this.currentPage = 1
-      this.year = year
-      this.reloadImages()
-      this.setSearchParams()
-    }
-  }
+  const changeYear = useCallback(
+    (newYear: string) => {
+      if (newYear !== year) {
+        setCurrentPage(1)
+        setYear(newYear)
+        setSearchParams({ currentPage: 1, year: newYear })
+      }
+    },
+    [year, setSearchParams]
+  )
 
-  public setPage(page: number) {
-    if (this.currentPage !== page) {
-      this.currentPage = Math.min(Math.max(page, 1), this.pageCount + 1)
-      this.reloadImages()
-      this.setSearchParams()
-    }
-  }
+  const changePage = useCallback(
+    (newPage: number) => {
+      if (newPage !== currentPage) {
+        setCurrentPage(Math.min(Math.max(newPage, 1), pageCount + 1))
+        setSearchParams({ currentPage: newPage })
+      }
+    },
+    [currentPage, setSearchParams]
+  )
 
-  private setSearchParams() {
-    const url = new URL(window.location.href)
-    url.pathname = `/${this.year}/${this.viewMode.toLowerCase()}/${this.currentPage}`
-    history.pushState({}, '', url.href)
+  return {
+    imagesInfos,
+    isLoading,
+    viewMode,
+    year,
+    currentPage,
+    pageCount,
+    configuration,
+    changeViewMode,
+    changeYear,
+    changePage,
   }
 }
-
-export const appViewModel = new AppViewModel()

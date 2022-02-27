@@ -1,6 +1,6 @@
 import React from "react"
 
-export const Logo = () =>
+export const Logo = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     fillRule="evenodd"
@@ -43,3 +43,4 @@ export const Logo = () =>
       d="M44.194 42.734c1.505.716 3.009.716 4.514 0"
     ></path>
   </svg>
+)

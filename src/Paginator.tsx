@@ -1,69 +1,148 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable no-unused-vars */
+import ClassNames from "classnames"
+import * as React from "react"
 
-import ClassNames from 'classnames'
-import { observer } from 'mobx-react'
-import * as React from 'react'
-import { appViewModel } from './AppViewModel'
+interface PaginatorProps {
+  changePage: (newPage: number) => void
+  currentPage: number
+  pageCount: number
+}
 
-const FirstPage = observer(() => {
-  return appViewModel.currentPage < 3
-  ? <></>
-  : pageLink(1)
-})
-
-const PrevPage = observer(() => {
-  return <>
-    {appViewModel.currentPage > 3 ? ellipsis : undefined}
-    {appViewModel.currentPage > 1 ? pageLink(appViewModel.currentPage - 1) : undefined}
-  </>
-})
-
-const ThisPage = observer(() => pageLink(appViewModel.currentPage, true))
-
-const NextPage = observer(() => {
-  return <>
-    {appViewModel.currentPage < appViewModel.pageCount ? pageLink(appViewModel.currentPage + 1) : undefined}
-    {appViewModel.currentPage < appViewModel.pageCount - 1 ? ellipsis : undefined}
-  </>
-})
-
-const LastPage = observer(() => {
-  return appViewModel.currentPage > appViewModel.pageCount - 2
-    ? <></>
-    : pageLink(appViewModel.pageCount)
-})
-
-export const Paginator = observer(() => {
-    const { currentPage } = appViewModel
-    return <nav className="pagination" role="navigation" aria-label="pagination">
+export const Paginator: React.FunctionComponent<PaginatorProps> = ({
+  currentPage,
+  changePage,
+  pageCount,
+}) => {
+  return (
+    <nav className="pagination" role="navigation" aria-label="pagination">
       <a
         className="pagination-previous"
-        onClick={appViewModel.setPage.bind(appViewModel, currentPage - 1)}>
-          Previous
+        onClick={() => changePage(currentPage - 1)}
+      >
+        Previous
       </a>
       <a
         className="pagination-next"
-        onClick={appViewModel.setPage.bind(appViewModel, currentPage + 1)}>
-          Next
-        </a>
+        onClick={() => changePage(currentPage + 1)}
+      >
+        Next
+      </a>
       <ul className="pagination-list">
-        <FirstPage />
-        <PrevPage />
-        <ThisPage />
-        <NextPage />
-        <LastPage />
+        <FirstPage
+          changePage={changePage}
+          currentPage={currentPage}
+          pageCount={pageCount}
+        />
+        <PrevPage
+          changePage={changePage}
+          currentPage={currentPage}
+          pageCount={pageCount}
+        />
+        <ThisPage
+          changePage={changePage}
+          currentPage={currentPage}
+          pageCount={pageCount}
+        />
+        <NextPage
+          changePage={changePage}
+          currentPage={currentPage}
+          pageCount={pageCount}
+        />
+        <LastPage
+          changePage={changePage}
+          currentPage={currentPage}
+          pageCount={pageCount}
+        />
       </ul>
     </nav>
-  }
+  )
+}
+
+interface PageLinkProps {
+  currentPage: number
+  pageCount: number
+  changePage: (newPage: number) => void
+}
+
+const FirstPage: React.FunctionComponent<PageLinkProps> = ({
+  currentPage,
+  changePage,
+}) => {
+  return currentPage < 3 ? <></> : <PageLink page={1} changePage={changePage} />
+}
+
+const PrevPage: React.FunctionComponent<PageLinkProps> = ({
+  currentPage,
+  changePage,
+}) => {
+  return (
+    <>
+      {currentPage > 3 ? <Ellipsis /> : null}
+      {currentPage > 1 ? (
+        <PageLink page={currentPage - 1} changePage={changePage} />
+      ) : null}
+    </>
+  )
+}
+
+const ThisPage: React.FunctionComponent<PageLinkProps> = ({
+  currentPage,
+  changePage,
+}) => (
+  <PageLink page={currentPage} changePage={changePage} isActivePage={true} />
 )
 
-const pageLink = (page: number, isCurrent: boolean = false) => <li>
-  <a
-    className={ClassNames("pagination-link", { 'is-current': isCurrent })}
-    key={`paginator_${page}`}
-    onClick={appViewModel.setPage.bind(appViewModel, page)}>
-    {page}
-  </a>
-</li>
+const NextPage: React.FunctionComponent<PageLinkProps> = ({
+  currentPage,
+  changePage,
+  pageCount,
+}) => {
+  return (
+    <>
+      {currentPage < pageCount ? (
+        <PageLink page={currentPage + 1} changePage={changePage} />
+      ) : undefined}
+      {currentPage < pageCount - 1 ? <Ellipsis /> : undefined}
+    </>
+  )
+}
 
-const ellipsis = <li> <span>&hellip;</span> </li>
+const LastPage: React.FunctionComponent<PageLinkProps> = ({
+  currentPage,
+  changePage,
+  pageCount,
+}) => {
+  return currentPage > pageCount - 2 ? (
+    <></>
+  ) : (
+    <PageLink page={pageCount} changePage={changePage} />
+  )
+}
+
+interface ActualPageLinkProps {
+  isActivePage?: boolean
+  page: number
+  changePage: (newPage: number) => void
+}
+const PageLink: React.FunctionComponent<ActualPageLinkProps> = ({
+  isActivePage,
+  changePage,
+  page,
+}) => (
+  <li>
+    <a
+      className={ClassNames("pagination-link", { "is-current": isActivePage })}
+      key={`paginator_${page}`}
+      onClick={() => changePage(page)}
+    >
+      {page}
+    </a>
+  </li>
+)
+
+const Ellipsis: React.FunctionComponent = () => (
+  <li>
+    {" "}
+    <span>&hellip;</span>{" "}
+  </li>
+)
