@@ -27,25 +27,35 @@ class AppViewModel {
   @observable public configuration: Configuration | null = null
 
   public constructor() {
-    this.loadConfig()
-
     const currentUrl = new URL(window.location.href)
-    const params = currentUrl.searchParams
     const path = currentUrl.pathname
-    switch (params.get('viewMode')) {
-      case 'Popular':
-        this.viewMode = 'Popular'
-        break
-      case 'Latest':
-        this.viewMode = 'Latest'
-        break
-      default:
-        this.viewMode = defaultViewMode
+    const year = /\/(20\d\d)(\/|$)/.exec(path)
+    if (year && year[1]) {
+      this.year = year[1]
     }
-    this.currentPage = params.has('page') ? Number(params.get('page')) : 1
-    const found = /\/(20\d\d)(\/|$)/.exec(path)
-    if (found && found[1]) {
-      this.setYear(found[1])
+    const viewMode = /\/(popular|latest)(\/|$)/.exec(path.toLowerCase())
+    if (!viewMode) {
+      this.viewMode = defaultViewMode 
+        this.viewMode = defaultViewMode
+      this.viewMode = defaultViewMode 
+        this.viewMode = defaultViewMode
+      this.viewMode = defaultViewMode 
+    } else {
+      this.viewMode =
+        viewMode[1] === 'popular' ? 'Popular' :
+        viewMode[1] === 'latest' ? 'Latest' :
+        defaultViewMode
+    }
+    const page = /\/(\d\d?)(\/|$)/.exec(path)
+    if (!page) {
+      this.currentPage = 1
+    } else {
+      this.currentPage = Number(page[1])
+    }
+
+    this.loadConfig()
+    if (this.year) {
+      this.reloadImages()
     }
   }
 
@@ -53,8 +63,11 @@ class AppViewModel {
     this.configuration = await (await fetch('/api/configuration')).json() as any
 
     if (!this.year && this.configuration?.latestYear) {
-      this.setYear(String(this.configuration?.latestYear))
+      this.year = String(this.configuration?.latestYear)
     }
+    if (!this.isLoading && this.imagesInfos.length === 0) {
+      this.reloadImages()
+    } 
   }
 
   public reloadImages() {
@@ -103,10 +116,7 @@ class AppViewModel {
 
   private setSearchParams() {
     const url = new URL(window.location.href)
-    url.pathname = `/${this.year}`
-    url.search = ""
-    url.searchParams.set('page', String(this.currentPage))
-    url.searchParams.set('viewMode', this.viewMode)
+    url.pathname = `/${this.year}/${this.viewMode.toLowerCase()}/${this.currentPage}`
     history.pushState({}, '', url.href)
   }
 }
