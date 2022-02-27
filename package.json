@@ -24,6 +24,7 @@
     "eslint-plugin-prettier": "4.0.0",
     "eslint-plugin-react": "7.28.0",
     "eslint-plugin-simple-import-sort": "7.0.0",
+    "http-proxy-middleware": "2.0.3",
     "node-sass": "7.0.1",
     "parcel": "2.3.2",
     "parcel-plugin-ogimage": "1.2.0",
