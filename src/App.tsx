@@ -98,15 +98,9 @@ const Result: React.FunctionComponent<ResultProps> = ({ result }) => {
       <div className="tile is-child card" key={result.link}>
         <a href={result.link} target="blank">
           <div className="card-image">
-            <figure
-              className="image is-16by9"
-              style={{
-                backgroundImage: `url(${result.image})`,
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "contain",
-                backgroundPosition: "center",
-              }}
-            />
+            <figure className="image is-16by9">
+              <img className="fit-contain" src={result.image} loading="lazy" />
+            </figure>
           </div>
           <div className="card-content">
             <div className="media-content">
