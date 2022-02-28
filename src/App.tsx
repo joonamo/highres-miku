@@ -81,7 +81,7 @@ const Results: React.FunctionComponent<ResultsProps> = (props) => {
         key={`parent-tile-${depth}`}
       >
         {[_1, _2].map((r, i) => (
-          <Result result={r} key={r?.link ?? `unknown-${i}`} />
+          <Result result={r} depth={depth} key={r?.link ?? `unknown-${i}`} />
         ))}
       </div>
       <Results results={rest} depth={depth + 1} />
@@ -91,15 +91,20 @@ const Results: React.FunctionComponent<ResultsProps> = (props) => {
 
 interface ResultProps {
   result?: ImageInfo
+  depth?: number
 }
-const Result: React.FunctionComponent<ResultProps> = ({ result }) => {
+const Result: React.FunctionComponent<ResultProps> = ({ result, depth }) => {
   return result ? (
     <div className="tile is-parent" key={result.link}>
       <div className="tile is-child card" key={result.link}>
         <a href={result.link} target="blank">
           <div className="card-image">
             <figure className="image is-16by9">
-              <img className="fit-contain" src={result.image} loading="lazy" />
+              <img
+                className="fit-contain"
+                src={result.image}
+                loading={depth === 0 ? "eager" : "lazy"}
+              />
             </figure>
           </div>
           <div className="card-content">
