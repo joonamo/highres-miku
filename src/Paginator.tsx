@@ -16,13 +16,13 @@ export const Paginator: React.FunctionComponent<PaginatorProps> = ({
   return (
     <nav className="pagination" role="navigation" aria-label="pagination">
       <a
-        className="pagination-previous"
+        className="pagination-previous has-background-white"
         onClick={() => changePage(currentPage - 1)}
       >
         Previous
       </a>
       <a
-        className="pagination-next"
+        className="pagination-next has-background-white"
         onClick={() => changePage(currentPage + 1)}
       >
         Next
@@ -131,7 +131,10 @@ const PageLink: React.FunctionComponent<ActualPageLinkProps> = ({
 }) => (
   <li>
     <a
-      className={ClassNames("pagination-link", { "is-current": isActivePage })}
+      className={ClassNames("pagination-link", {
+        "is-current": isActivePage,
+        "has-background-white": !isActivePage,
+      })}
       key={`paginator_${page}`}
       onClick={() => changePage(page)}
     >

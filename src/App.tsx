@@ -81,7 +81,7 @@ const Results: React.FunctionComponent<ResultsProps> = (props) => {
         key={`parent-tile-${depth}`}
       >
         {[_1, _2].map((r, i) => (
-          <Result result={r} depth={depth} key={r?.link ?? `unknown-${i}`} />
+          <Result result={r} depth={depth} key={`${depth}-${i}`} />
         ))}
       </div>
       <Results results={rest} depth={depth + 1} />
@@ -108,9 +108,20 @@ const Result: React.FunctionComponent<ResultProps> = ({ result, depth }) => {
             </figure>
           </div>
           <div className="card-content">
-            <div className="media-content">
-              <p className="title is-5">{result.name}</p>
-              <p className="subtitle is-5">{result.author}</p>
+            <div className="media">
+              <div className="media-left">
+                <figure className="image is-48x48">
+                  <img
+                    className="is-rounded"
+                    src={result.authorIcon}
+                    loading="lazy"
+                  />
+                </figure>
+              </div>
+              <div className="media-content">
+                <p className="title is-5">{result.name}</p>
+                <p className="subtitle is-5">{result.author}</p>
+              </div>
             </div>
           </div>
         </a>

@@ -33,7 +33,8 @@ def processItem(item):
     'name': item.find(class_='thumb_over').text,
     'author': item.find(class_='i_title').text,
     'link': "https://piapro.jp%s" % linkElem.attrs['href'],
-    'image': getImageLink(linkElem.attrs['style'])
+    'image': getImageLink(linkElem.attrs['style']),
+    'authorIcon': "https:%s" % item.find(class_='i_icon').find('img').attrs['src']
   }
 
 async def getLatestMiku(page="1", year="2020"):
@@ -72,7 +73,7 @@ async def getLatestYear():
     years = await asyncio.gather(*[
       resultsWithYear(year) 
       for year
-      in reversed(range(2020, currentYear + 2))
+      in reversed(range(2023, currentYear + 2))
     ])
     for year in years:
       if len(year["results"]["results"]) > 0:
