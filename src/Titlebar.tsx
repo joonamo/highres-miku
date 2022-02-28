@@ -92,7 +92,7 @@ export const Titlebar: React.FunctionComponent<TitlebarProps> = ({
           <p className="title has-text-white">Snow Miku</p>
         </div>
         <div className="is-paddingless navbar-item is-hidden-desktop flex-1">
-          <p className="title flex-1 has-text-white has-text-right-mobile">
+          <p className="title main-title flex-1 has-text-white has-text-right-mobile">
             Snow Miku {year}
           </p>
         </div>
