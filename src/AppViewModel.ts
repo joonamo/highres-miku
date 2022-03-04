@@ -69,7 +69,8 @@ export const useAppViewModel = (): AppViewModel => {
     const loadConfig = async () => {
       const newConfiguration = (await (
         await fetch("/api/configuration")
-      ) /* await fetch("https://snowmiku.net/api/configuration") */
+      )
+        // await fetch("https://snowmiku.net/api/configuration")
         .json()) as any
       setConfiguration(newConfiguration)
 
@@ -133,9 +134,14 @@ export const useAppViewModel = (): AppViewModel => {
   const changeYear = useCallback(
     (newYear: string) => {
       if (newYear !== year) {
+        const viewMode =
+          newYear === String(configuration?.latestYear)
+            ? defaultViewMode
+            : "Popular"
+        setViewMode(viewMode)
         setCurrentPage(1)
         setYear(newYear)
-        setSearchParams({ currentPage: 1, year: newYear })
+        setSearchParams({ currentPage: 1, year: newYear, viewMode })
       }
     },
     [year, setSearchParams]
