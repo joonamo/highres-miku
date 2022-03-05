@@ -144,7 +144,7 @@ export const useAppViewModel = (): AppViewModel => {
         setSearchParams({ currentPage: 1, year: newYear, viewMode })
       }
     },
-    [year, setSearchParams]
+    [year, setSearchParams, configuration?.latestYear]
   )
 
   const changePage = useCallback(
@@ -154,7 +154,7 @@ export const useAppViewModel = (): AppViewModel => {
         setSearchParams({ currentPage: newPage })
       }
     },
-    [currentPage, setSearchParams]
+    [currentPage, pageCount, setSearchParams]
   )
 
   return {
