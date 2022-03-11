@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import ClassNames from "classnames"
 import * as React from "react"
+import { Link } from "react-router-dom"
 
 import { Configuration, ViewMode } from "./AppViewModel"
 import { Logo } from "./logo"
@@ -9,16 +10,12 @@ interface TitlebarProps {
   viewMode: ViewMode
   year: string | null
   configuration: Configuration | null
-  changeViewMode: (newMode: ViewMode) => void
-  changeYear: (newYear: string) => void
 }
 
 export const Titlebar: React.FunctionComponent<TitlebarProps> = ({
   viewMode,
   year,
   configuration,
-  changeViewMode,
-  changeYear,
 }) => {
   const [burgerOpen, setBurgerOpen] = React.useState<boolean>(false)
   const [sortDropdownOpen, setSortDropdownOpen] = React.useState<boolean>(false)
@@ -60,24 +57,6 @@ export const Titlebar: React.FunctionComponent<TitlebarProps> = ({
     }
   }, [yearDropdownOpen, setYearDropdownOpen, closeSubmenus])
 
-  const setLatest = React.useCallback(() => {
-    changeViewMode("Latest")
-    closeAll()
-  }, [changeViewMode, closeAll])
-
-  const setPopular = React.useCallback(() => {
-    changeViewMode("Popular")
-    closeAll()
-  }, [changeViewMode, closeAll])
-
-  const setYear = React.useCallback(
-    (year: string) => {
-      changeYear(year)
-      closeAll()
-    },
-    [changeYear, closeAll]
-  )
-
   return (
     <nav
       className="navbar is-info is-fixed-top add-shadow"
@@ -100,7 +79,7 @@ export const Titlebar: React.FunctionComponent<TitlebarProps> = ({
         <YearSelector
           configuration={configuration}
           isTitle={true}
-          setYear={setYear}
+          closeMenu={closeAll}
           toggleYearDropdown={toggleYearDropdown}
           year={year}
           yearDropdownOpen={yearDropdownOpen}
@@ -130,7 +109,7 @@ export const Titlebar: React.FunctionComponent<TitlebarProps> = ({
           <YearSelector
             configuration={configuration}
             isTitle={false}
-            setYear={setYear}
+            closeMenu={closeAll}
             toggleYearDropdown={toggleYearDropdown}
             year={year}
             yearDropdownOpen={yearDropdownOpen}
@@ -150,12 +129,20 @@ export const Titlebar: React.FunctionComponent<TitlebarProps> = ({
                 "is-hidden-touch": !sortDropdownOpen,
               })}
             >
-              <a className="navbar-item" onClick={setLatest}>
+              <Link
+                to={`/${year}/latest`}
+                className="navbar-item"
+                onClick={closeAll}
+              >
                 Latest
-              </a>
-              <a className="navbar-item" onClick={setPopular}>
+              </Link>
+              <Link
+                to={`/${year}/popular`}
+                className="navbar-item"
+                onClick={closeAll}
+              >
                 Popular
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -191,7 +178,7 @@ interface YearSelectorProps {
   isTitle: boolean
   yearDropdownOpen: boolean
   toggleYearDropdown: () => void
-  setYear: (year: string) => void
+  closeMenu: () => void
   configuration: Configuration | null
 }
 const YearSelector: React.FunctionComponent<YearSelectorProps> = ({
@@ -200,7 +187,7 @@ const YearSelector: React.FunctionComponent<YearSelectorProps> = ({
   yearDropdownOpen,
   toggleYearDropdown,
   configuration,
-  setYear,
+  closeMenu,
 }) => (
   <div
     className={ClassNames(
@@ -221,18 +208,18 @@ const YearSelector: React.FunctionComponent<YearSelectorProps> = ({
         "is-hidden-touch": !yearDropdownOpen,
       })}
     >
-      <YearSelectors configuration={configuration} setYear={setYear} />
+      <YearSelectors configuration={configuration} closeMenu={closeMenu} />
     </div>
   </div>
 )
 
 interface YearSelectorsProps {
   configuration: Configuration | null
-  setYear: (year: string) => void
+  closeMenu: () => void
 }
 const YearSelectors: React.FunctionComponent<YearSelectorsProps> = ({
   configuration,
-  setYear,
+  closeMenu,
 }) => {
   if (configuration) {
     const selectors = []
@@ -242,13 +229,14 @@ const YearSelectors: React.FunctionComponent<YearSelectorsProps> = ({
       year--
     ) {
       selectors.push(
-        <a
+        <Link
           className="navbar-item"
-          onClick={() => setYear(String(year))}
+          onClick={closeMenu}
+          to={`/${year}`}
           key={`year-selector-${year}`}
         >
           {year}
-        </a>
+        </Link>
       )
     }
     return <>{selectors}</>

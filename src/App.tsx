@@ -9,6 +9,7 @@ import { Titlebar } from "./Titlebar"
 
 export const App: React.FunctionComponent = () => {
   const appViewModel = useAppViewModel()
+
   return (
     <>
       <Helmet>
@@ -24,22 +25,21 @@ export const App: React.FunctionComponent = () => {
         viewMode={appViewModel.viewMode}
         year={appViewModel.year}
         configuration={appViewModel.configuration}
-        changeViewMode={appViewModel.changeViewMode}
-        changeYear={appViewModel.changeYear}
       />
       <section className="section">
         <div className="container">
-          <h2 className="title is-hidden-desktop">
+          <h2 className="title">
             {appViewModel.viewMode === "Popular"
               ? "Most Popular Entries"
               : "Latest Entries"}
           </h2>
           <div>
             <Paginator
-              changePage={appViewModel.changePage}
               currentPage={appViewModel.currentPage}
               pageCount={appViewModel.pageCount}
               key="head-paginator"
+              year={appViewModel.year}
+              viewMode={appViewModel.viewMode}
             />
             {!appViewModel.configuration || appViewModel.isLoading ? (
               <Loading key="loader" />
@@ -47,10 +47,11 @@ export const App: React.FunctionComponent = () => {
               <>
                 <Results results={appViewModel.imagesInfos} />
                 <Paginator
-                  changePage={appViewModel.changePage}
                   currentPage={appViewModel.currentPage}
                   pageCount={appViewModel.pageCount}
                   key="footer-paginator"
+                  year={appViewModel.year}
+                  viewMode={appViewModel.viewMode}
                 />
               </>
             )}

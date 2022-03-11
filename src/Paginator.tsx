@@ -1,55 +1,64 @@
 /* eslint-disable no-unused-vars */
 import ClassNames from "classnames"
 import * as React from "react"
+import { Link } from "react-router-dom"
+
+import { ViewMode } from "./AppViewModel"
 
 interface PaginatorProps {
-  changePage: (newPage: number) => void
   currentPage: number
   pageCount: number
+  year: string | null
+  viewMode: ViewMode
 }
 
 export const Paginator: React.FunctionComponent<PaginatorProps> = ({
   currentPage,
-  changePage,
   pageCount,
+  year,
+  viewMode,
 }) => {
+  const pagePrefix = React.useMemo(
+    () => `/${year}/${viewMode}`,
+    [year, viewMode]
+  )
   return (
     <nav className="pagination" role="navigation" aria-label="pagination">
-      <a
+      <Link
         className="pagination-previous has-background-white"
-        onClick={() => changePage(currentPage - 1)}
+        to={`${pagePrefix}/${Math.max(1, currentPage - 1)}`}
       >
         Previous
-      </a>
-      <a
+      </Link>
+      <Link
         className="pagination-next has-background-white"
-        onClick={() => changePage(currentPage + 1)}
+        to={`${pagePrefix}/${Math.min(pageCount, currentPage + 1)}`}
       >
         Next
-      </a>
+      </Link>
       <ul className="pagination-list">
         <FirstPage
-          changePage={changePage}
+          pagePrefix={pagePrefix}
           currentPage={currentPage}
           pageCount={pageCount}
         />
         <PrevPage
-          changePage={changePage}
+          pagePrefix={pagePrefix}
           currentPage={currentPage}
           pageCount={pageCount}
         />
         <ThisPage
-          changePage={changePage}
+          pagePrefix={pagePrefix}
           currentPage={currentPage}
           pageCount={pageCount}
         />
         <NextPage
-          changePage={changePage}
+          pagePrefix={pagePrefix}
           currentPage={currentPage}
           pageCount={pageCount}
         />
         <LastPage
-          changePage={changePage}
+          pagePrefix={pagePrefix}
           currentPage={currentPage}
           pageCount={pageCount}
         />
@@ -61,25 +70,25 @@ export const Paginator: React.FunctionComponent<PaginatorProps> = ({
 interface PageLinkProps {
   currentPage: number
   pageCount: number
-  changePage: (newPage: number) => void
+  pagePrefix: string
 }
 
 const FirstPage: React.FunctionComponent<PageLinkProps> = ({
   currentPage,
-  changePage,
+  pagePrefix,
 }) => {
-  return currentPage < 3 ? <></> : <PageLink page={1} changePage={changePage} />
+  return currentPage < 3 ? <></> : <PageLink page={1} pagePrefix={pagePrefix} />
 }
 
 const PrevPage: React.FunctionComponent<PageLinkProps> = ({
   currentPage,
-  changePage,
+  pagePrefix,
 }) => {
   return (
     <>
       {currentPage > 3 ? <Ellipsis /> : null}
       {currentPage > 1 ? (
-        <PageLink page={currentPage - 1} changePage={changePage} />
+        <PageLink page={currentPage - 1} pagePrefix={pagePrefix} />
       ) : null}
     </>
   )
@@ -87,20 +96,20 @@ const PrevPage: React.FunctionComponent<PageLinkProps> = ({
 
 const ThisPage: React.FunctionComponent<PageLinkProps> = ({
   currentPage,
-  changePage,
+  pagePrefix,
 }) => (
-  <PageLink page={currentPage} changePage={changePage} isActivePage={true} />
+  <PageLink page={currentPage} pagePrefix={pagePrefix} isActivePage={true} />
 )
 
 const NextPage: React.FunctionComponent<PageLinkProps> = ({
   currentPage,
-  changePage,
+  pagePrefix,
   pageCount,
 }) => {
   return (
     <>
       {currentPage < pageCount ? (
-        <PageLink page={currentPage + 1} changePage={changePage} />
+        <PageLink page={currentPage + 1} pagePrefix={pagePrefix} />
       ) : undefined}
       {currentPage < pageCount - 1 ? <Ellipsis /> : undefined}
     </>
@@ -109,37 +118,37 @@ const NextPage: React.FunctionComponent<PageLinkProps> = ({
 
 const LastPage: React.FunctionComponent<PageLinkProps> = ({
   currentPage,
-  changePage,
+  pagePrefix,
   pageCount,
 }) => {
   return currentPage > pageCount - 2 ? (
     <></>
   ) : (
-    <PageLink page={pageCount} changePage={changePage} />
+    <PageLink page={pageCount} pagePrefix={pagePrefix} />
   )
 }
 
 interface ActualPageLinkProps {
   isActivePage?: boolean
   page: number
-  changePage: (newPage: number) => void
+  pagePrefix: string
 }
 const PageLink: React.FunctionComponent<ActualPageLinkProps> = ({
   isActivePage,
-  changePage,
+  pagePrefix,
   page,
 }) => (
   <li>
-    <a
+    <Link
       className={ClassNames("pagination-link", {
         "is-current": isActivePage,
         "has-background-white": !isActivePage,
       })}
       key={`paginator_${page}`}
-      onClick={() => changePage(page)}
+      to={`${pagePrefix}/${page}`}
     >
       {page}
-    </a>
+    </Link>
   </li>
 )
 
