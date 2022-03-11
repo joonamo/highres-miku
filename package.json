@@ -35,7 +35,7 @@
   },
   "scripts": {
     "start-dev": "parcel --port 3000 --public-url http://localhost:3000 src/index.html",
-    "build": "rm -rf build && parcel build src/index.html --no-source-maps --dist-dir=build --public-url https://snowmiku.net",
+    "build": "rm -rf build && parcel build src/index.html --no-source-maps --dist-dir=build --public-url https://snowmiku.net && cp src/robots.txt build/robots.txt",
     "lint": "tsc --noEmit && eslint src/**/*.(tsx|ts)"
   },
   "browserslist": {
