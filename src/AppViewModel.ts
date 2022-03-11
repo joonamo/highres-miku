@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useParams } from "react-router-dom"
 
 import { defaultViewMode } from "./staticConfig"
@@ -49,6 +49,7 @@ export const useAppViewModel = (): AppViewModel => {
       parseYear(yearP) ?? (configuration && String(configuration?.latestYear)),
     [yearP, configuration?.latestYear]
   )
+  const [abortController, setAbortController] = useState<AbortController>()
   const viewMode = useMemo<ViewMode>(() => {
     const v = viewModeP?.toLowerCase()
     return v === "popular"
@@ -81,6 +82,9 @@ export const useAppViewModel = (): AppViewModel => {
   // Reload images
   useEffect(() => {
     if (viewMode && currentPage && year) {
+      abortController?.abort()
+      const newAbortController = new AbortController()
+      setAbortController(newAbortController)
       const url = new URL(window.location.href)
       // const url = new URL("https://snowmiku.net")
       setIsLoading(true)
@@ -88,15 +92,18 @@ export const useAppViewModel = (): AppViewModel => {
       url.pathname = viewMode === "Latest" ? "/api/latest" : "/api/popular"
       url.searchParams.set("page", String(currentPage))
       url.searchParams.set("year", String(year))
-      fetch(url.href)
+      fetch(url.href, { signal: newAbortController.signal })
         .then(async (r) => {
           const data = await r.json()
           setImageInfos(data.results)
           setPageCount(Number(data.pageCount))
-        })
-        .catch((e) => console.log(e))
-        .finally(() => {
           setIsLoading(false)
+        })
+        .catch((e) => {
+          if (e.name !== "AbortError") {
+            console.log(e.message)
+            setIsLoading(false)
+          }
         })
     }
   }, [viewMode, currentPage, year])
