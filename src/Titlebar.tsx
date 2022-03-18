@@ -130,14 +130,14 @@ export const Titlebar: React.FunctionComponent<TitlebarProps> = ({
               })}
             >
               <Link
-                to={`/${year}/latest`}
+                to={`/${year}/Latest`}
                 className="navbar-item"
                 onClick={closeAll}
               >
                 Latest
               </Link>
               <Link
-                to={`/${year}/popular`}
+                to={`/${year}/Popular`}
                 className="navbar-item"
                 onClick={closeAll}
               >
