@@ -1,12 +1,14 @@
 import "./styles/sass/style.scss"
 
 import * as React from "react"
-import * as ReactDOM from "react-dom"
+import * as ReactDOM from "react-dom/client"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 
 import { App } from "./App"
 
-ReactDOM.render(
+const root = ReactDOM.createRoot(document.getElementById("root")!)
+
+root.render(
   <BrowserRouter>
     <Routes>
       <Route path="/" element={<App />}>
@@ -19,6 +21,5 @@ ReactDOM.render(
         </Route>
       </Route>
     </Routes>
-  </BrowserRouter>,
-  document.getElementById("root") as HTMLElement
+  </BrowserRouter>
 )
