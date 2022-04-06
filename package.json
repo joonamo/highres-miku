@@ -12,7 +12,7 @@
     "react-svg": "14.1.12"
   },
   "devDependencies": {
-    "@parcel/transformer-sass": "2.4.0",
+    "@parcel/transformer-sass": "2.4.1",
     "@types/classnames": "2.3.1",
     "@types/node": "17.0.21",
     "@types/react": "17.0.43",
@@ -27,7 +27,7 @@
     "eslint-plugin-simple-import-sort": "7.0.0",
     "http-proxy-middleware": "2.0.3",
     "node-sass": "7.0.1",
-    "parcel": "2.4.0",
+    "parcel": "2.4.1",
     "parcel-plugin-ogimage": "1.2.0",
     "prettier": "2.5.1",
     "process": "^0.11.10",
@@ -40,9 +40,11 @@
   },
   "browserslist": {
     "production": [
-      ">0.2%",
+      ">1%",
       "not dead",
-      "not op_mini all"
+      "not op_mini all",
+      "not ie > 0",
+      "not ie_mob > 0"
     ],
     "development": [
       "last 1 chrome version",
