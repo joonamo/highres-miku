@@ -6,7 +6,6 @@ import { Disclaimer } from "./Disclaimer"
 import { Loading } from "./Loading"
 import { Paginator } from "./Paginator"
 import { Titlebar } from "./Titlebar"
-import { VotingInfo } from "./VotingInfo"
 
 export const App: React.FunctionComponent = () => {
   const appViewModel = useAppViewModel()
@@ -29,7 +28,6 @@ export const App: React.FunctionComponent = () => {
       />
       <section className="section">
         <div className="container">
-          <VotingInfo />
           <h2 className="title">
             {appViewModel.viewMode === "Popular"
               ? "Most Popular Entries"
