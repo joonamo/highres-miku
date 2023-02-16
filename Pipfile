@@ -10,7 +10,7 @@ ipython = "*"
 [packages]
 beautifulsoup4 = "*"
 flask-cors = "*"
-werkzeug = "==1.0.0"
+werkzeug = "==2.2.3"
 cachelib = "*"
 cchardet = "*"
 aiodns = "*"
