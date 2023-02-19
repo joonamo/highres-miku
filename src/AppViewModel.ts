@@ -69,7 +69,7 @@ export const useAppViewModel = (): AppViewModel => {
   useEffect(() => {
     const loadConfig = async () => {
       const newConfiguration = (await (
-        await fetch("/api/configuration")
+        await fetch("https://snowmiku-next.vercel.app/api/configuration")
       )
         // await fetch("https://snowmiku.net/api/configuration")
         .json()) as any
@@ -85,8 +85,8 @@ export const useAppViewModel = (): AppViewModel => {
       abortController?.abort()
       const newAbortController = new AbortController()
       setAbortController(newAbortController)
-      const url = new URL(window.location.href)
-      // const url = new URL("https://snowmiku.net")
+      // const url = new URL(window.location.href)
+      const url = new URL("https://snowmiku-next.vercel.app")
       setIsLoading(true)
       url.search = ""
       url.pathname = viewMode === "Latest" ? "/api/latest" : "/api/popular"
